@@ -1,0 +1,26 @@
+{
+  "vulnerabilities": {
+    "lodash": {
+      "name": "lodash",
+      "severity": "high",
+      "range": "<4.17.21",
+      "via": [
+        {
+          "title": "Prototype Pollution in lodash",
+          "url": "https://npmjs.com/advisories/1065"
+        }
+      ]
+    },
+    "minimist": {
+      "name": "minimist",
+      "severity": "critical",
+      "range": "<1.2.6",
+      "via": [
+        {
+          "title": "Prototype Pollution in minimist",
+          "url": "https://npmjs.com/advisories/1500"
+        }
+      ]
+    }
+  }
+}

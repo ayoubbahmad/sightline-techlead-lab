@@ -1,0 +1,14 @@
+{
+  "files": [
+    "/projects/my-app/src/legacy/OldComponent.tsx"
+  ],
+  "issues": [
+    {
+      "/projects/my-app/src/utils/helpers.ts": {
+        "exports": [
+          { "name": "unusedHelper", "line": 5 }
+        ]
+      }
+    }
+  ]
+}

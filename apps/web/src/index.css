@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --surface-0: #0a0a0b;
+  --surface-1: #111113;
+  --surface-2: #1c1c1f;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--surface-0)] text-zinc-100 font-sans antialiased;
+  }
+
+  * {
+    @apply border-zinc-800;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-700 rounded-full;
+  }
+}

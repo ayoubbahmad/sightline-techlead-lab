@@ -1,0 +1,21 @@
+[
+  {
+    "filePath": "/projects/my-app/src/App.tsx",
+    "messages": [
+      {
+        "ruleId": "no-unused-vars",
+        "severity": 2,
+        "message": "'unused' is assigned a value but never used.",
+        "line": 3,
+        "column": 9
+      },
+      {
+        "ruleId": "react-hooks/exhaustive-deps",
+        "severity": 1,
+        "message": "React Hook useEffect has a missing dependency: 'value'.",
+        "line": 15,
+        "column": 5
+      }
+    ]
+  }
+]
