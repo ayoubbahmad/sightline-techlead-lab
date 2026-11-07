@@ -1,6 +1,8 @@
 # AI Agent Integration
 
-> Status: **planned — out of scope for v0.1**
+> Status: **partially shipped.** Automatic scan triggers (watch mode) are live; agent context summary and session attribution are planned for v0.3.
+>
+> **As built:** `WatcherService` (`apps/server/src/services/watcher.service.ts`) watches `<project>/.git` for `COMMIT_EDITMSG` changes, debounced 500ms, and is toggled per project (`projects.watch_enabled`). The sketch below (refs/heads, 5s debounce) was the original plan.
 > Category tag: `quality` / cross-cutting
 
 ## Purpose

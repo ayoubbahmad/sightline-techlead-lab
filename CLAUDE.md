@@ -10,7 +10,8 @@ Local-first desktop tool for React Native developers who orchestrate AI agents. 
 - **[docs/features/architecture.md](./docs/features/architecture.md)** — dependency-cruiser
 - **[docs/features/dependencies.md](./docs/features/dependencies.md)** — outdated packages
 - **[docs/features/security.md](./docs/features/security.md)** — npm audit, gitleaks
-- **[docs/features/ai-agents.md](./docs/features/ai-agents.md)** — future: auto-scan on agent commit
+- **[docs/features/integrations.md](./docs/features/integrations.md)** — design: connecting external tools (SARIF, Semgrep, mobsfscan, SonarQube, MobSF)
+- **[docs/features/ai-agents.md](./docs/features/ai-agents.md)** — watch mode (shipped), agent summary (planned)
 - **[docs/features/performance.md](./docs/features/performance.md)** — future: bundle size, render perf
 
 ## Architecture
