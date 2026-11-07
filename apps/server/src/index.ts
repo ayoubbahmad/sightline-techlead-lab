@@ -18,11 +18,21 @@ async function main() {
     origin: /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/,
   });
 
-  app.addContentTypeParser('application/json', { parseAs: 'string' }, (req, body, done) => {
+  // Bodyless POST/DELETE requests (trigger scan, toggle watch) may still carry
+  // a JSON content-type; treat an empty body as "no body" instead of a 500.
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, (_req, body, done) => {
+    const text = typeof body === 'string' ? body : body.toString('utf8');
+    if (text.trim() === '') {
+      done(null, undefined);
+      return;
+    }
     try {
-      done(null, JSON.parse(body as string));
+      done(null, JSON.parse(text));
     } catch (err) {
-      done(err as Error, undefined);
+      // Malformed JSON is a client error, not a server failure.
+      const error = err as Error & { statusCode?: number };
+      error.statusCode = 400;
+      done(error, undefined);
     }
   });
 
