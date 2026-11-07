@@ -3,27 +3,75 @@
 @tailwind utilities;
 
 :root {
-  --surface-0: #0a0a0b;
-  --surface-1: #111113;
-  --surface-2: #1c1c1f;
+  /* Surfaces — cool blue-steel dark */
+  --surface-0: #0c0d11;
+  --surface-1: #13151c;
+  --surface-2: #1a1d27;
+  --surface-3: #21253200;
+
+  /* Borders */
+  --border: rgba(255, 255, 255, 0.07);
+  --border-raised: rgba(255, 255, 255, 0.12);
+
+  /* Text */
+  --text-1: #e8eaf2;
+  --text-2: #7c8099;
+  --text-3: #3d4260;
+
+  /* Semantic */
+  --c-critical: #d95555;
+  --c-high:     #c47828;
+  --c-medium:   #a88c18;
+  --c-low:      #4878d4;
+  --c-info:     #525875;
+  --c-ok:       #38956a;
+
+  /* Accent */
+  --c-accent: #4878d4;
 }
 
 @layer base {
-  body {
-    @apply bg-[var(--surface-0)] text-zinc-100 font-sans antialiased;
-  }
-
   * {
-    @apply border-zinc-800;
+    box-sizing: border-box;
+    border-color: var(--border);
   }
 
-  ::-webkit-scrollbar {
-    width: 6px;
+  html, body, #root {
+    height: 100%;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+
+  body {
+    @apply antialiased;
+    background: var(--surface-0);
+    color: var(--text-1);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
   }
-  ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-700 rounded-full;
-  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+}
+
+@layer utilities {
+  .text-1 { color: var(--text-1); }
+  .text-2 { color: var(--text-2); }
+  .text-3 { color: var(--text-3); }
+
+  .bg-surface-0 { background: var(--surface-0); }
+  .bg-surface-1 { background: var(--surface-1); }
+  .bg-surface-2 { background: var(--surface-2); }
+
+  .border-subtle { border-color: var(--border); }
+  .border-raised { border-color: var(--border-raised); }
+
+  .severity-critical { color: var(--c-critical); }
+  .severity-high     { color: var(--c-high); }
+  .severity-medium   { color: var(--c-medium); }
+  .severity-low      { color: var(--c-low); }
+  .severity-info     { color: var(--c-info); }
+
+  .tabular { font-variant-numeric: tabular-nums; }
 }
