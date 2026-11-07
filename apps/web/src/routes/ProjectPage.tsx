@@ -26,6 +26,7 @@ export function ProjectPage() {
   const queryClient = useQueryClient();
   const [activeScanId, setActiveScanId] = useState<string | null>(null);
   const [showFindings, setShowFindings] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
 
   const { data: project } = useQuery({
     queryKey: ['project', id],
@@ -55,7 +56,8 @@ export function ProjectPage() {
 
   const scanMutation = useMutation({
     mutationFn: () => api.scans.trigger(id!),
-    onSuccess: (scan) => setActiveScanId(scan.id),
+    onSuccess: (scan) => { setScanError(null); setActiveScanId(scan.id); },
+    onError: (err) => setScanError(err instanceof Error ? err.message : 'Scan failed'),
   });
 
   const handleScanDone = useCallback(() => {
@@ -157,6 +159,12 @@ export function ProjectPage() {
           />
           {project.watchEnabled ? 'Watching' : 'Watch'}
         </button>
+
+        {scanError && (
+          <span className="text-xs shrink-0" style={{ color: 'var(--c-critical)' }}>
+            {scanError}
+          </span>
+        )}
 
         <button
           onClick={() => scanMutation.mutate()}

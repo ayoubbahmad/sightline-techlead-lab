@@ -1,5 +1,6 @@
 import { watch, type FSWatcher } from 'node:fs';
 import { join } from 'node:path';
+import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { projects, scanRuns } from '../db/schema.js';
@@ -23,7 +24,8 @@ function triggerScan(project: Project): void {
 
   if (active) return;
 
-  void runScan(project, () => {
+  const scanRunId = randomUUID();
+  void runScan(scanRunId, project, () => {
     // progress events are SSE-only; watcher-triggered scans have no subscriber
   });
 }

@@ -1,4 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
+import { randomUUID } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { projects, scanRuns, toolRuns } from '../db/schema.js';
@@ -20,21 +21,29 @@ export const scansRoutes: FastifyPluginAsync = async (fastify) => {
       .find((s) => s.status === 'running' || s.status === 'queued');
     if (running) return reply.code(409).send({ error: 'Scan already in progress' });
 
+    // Create the scan record synchronously so we can return its ID immediately
+    const scanRunId = randomUUID();
+    const now = new Date().toISOString();
+    const scanRecord = {
+      id: scanRunId,
+      projectId: project.id,
+      status: 'running' as const,
+      startedAt: now,
+      completedAt: null,
+      newFindingCount: 0,
+      fixedFindingCount: 0,
+    };
+
     // Start scan async, don't await
-    runScan(project, (event) => {
+    runScan(scanRunId, project, (event) => {
       const subs = subscribers.get(event.scanRunId) ?? [];
       for (const sub of subs) sub(event);
       if (event.type === 'scan_done') {
-        // Brief delay to ensure last event is sent before cleanup
         setTimeout(() => subscribers.delete(event.scanRunId), 5000);
       }
     }).catch(() => {/* errors recorded in DB */});
 
-    // Return immediately with the queued scan (scan service sets running status synchronously before first await)
-    // Small yield to let the insert happen
-    await new Promise((resolve) => setTimeout(resolve, 10));
-    const scan = db.select().from(scanRuns).where(eq(scanRuns.projectId, project.id)).all().at(-1);
-    return reply.code(202).send(scan);
+    return reply.code(202).send(scanRecord);
   });
 
   fastify.get<{ Params: { id: string } }>('/api/projects/:id/scans', async (request, reply) => {

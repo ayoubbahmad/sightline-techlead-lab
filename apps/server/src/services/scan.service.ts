@@ -8,8 +8,7 @@ import { randomUUID } from 'node:crypto';
 
 type ProgressCallback = (event: ScanProgressEvent) => void;
 
-export async function runScan(project: Project, onProgress: ProgressCallback): Promise<string> {
-  const scanRunId = randomUUID();
+export async function runScan(scanRunId: string, project: Project, onProgress: ProgressCallback): Promise<void> {
   const now = new Date().toISOString();
 
   db.insert(scanRuns).values({
@@ -153,5 +152,4 @@ export async function runScan(project: Project, onProgress: ProgressCallback): P
   db.update(projects).set({ lastScannedAt: completedAt }).where(eq(projects.id, project.id)).run();
 
   onProgress({ type: 'scan_done', scanRunId });
-  return scanRunId;
 }
