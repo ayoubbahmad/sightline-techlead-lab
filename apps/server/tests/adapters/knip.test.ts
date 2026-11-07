@@ -17,6 +17,7 @@ const mockProject: Project = {
   createdAt: new Date().toISOString(),
   lastVisitedAt: null,
   lastScannedAt: null,
+  watchEnabled: false,
 };
 
 const fixtureOutput = readFileSync(

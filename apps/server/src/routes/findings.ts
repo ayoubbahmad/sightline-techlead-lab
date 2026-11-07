@@ -1,5 +1,5 @@
 import type { FastifyPluginAsync } from 'fastify';
-import { eq, and } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { projects, findings } from '../db/schema.js';
 import { UpdateFindingSchema, FindingsQuerySchema } from '@sightline/shared';

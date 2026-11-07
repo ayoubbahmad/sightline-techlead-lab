@@ -5,6 +5,7 @@ import type {
   ProjectHealth,
   CommitInfo,
   ScanProgressEvent,
+  ToolRun,
 } from '@sightline/shared';
 
 const BASE = '/api';
@@ -37,7 +38,7 @@ export const api = {
   scans: {
     trigger: (projectId: string) => request<ScanRun>(`/projects/${projectId}/scans`, { method: 'POST' }),
     list: (projectId: string) => request<ScanRun[]>(`/projects/${projectId}/scans`),
-    get: (scanId: string) => request<ScanRun & { toolRuns: import('@sightline/shared').ToolRun[] }>(`/scans/${scanId}`),
+    get: (scanId: string) => request<ScanRun & { toolRuns: ToolRun[] }>(`/scans/${scanId}`),
   },
   findings: {
     list: (projectId: string, params?: Record<string, string>) => {
