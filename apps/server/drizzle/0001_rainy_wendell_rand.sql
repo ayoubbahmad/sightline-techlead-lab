@@ -1,0 +1,1 @@
+ALTER TABLE `projects` ADD `watch_enabled` integer DEFAULT false NOT NULL;

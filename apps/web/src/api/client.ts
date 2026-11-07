@@ -28,6 +28,8 @@ export const api = {
     get: (id: string) => request<Project & { branch: string; lastCommit: { hash: string; author: string; message: string; date: string } | null }>(`/projects/${id}`),
     add: (path: string) => request<Project>('/projects', { method: 'POST', body: JSON.stringify({ path }) }),
     remove: (id: string) => request<void>(`/projects/${id}`, { method: 'DELETE' }),
+    enableWatch: (id: string) => request<{ watchEnabled: boolean }>(`/projects/${id}/watch`, { method: 'POST' }),
+    disableWatch: (id: string) => request<{ watchEnabled: boolean }>(`/projects/${id}/watch`, { method: 'DELETE' }),
     health: (id: string) => request<ProjectHealth>(`/projects/${id}/health`),
     commits: (id: string) => request<CommitInfo[]>(`/projects/${id}/commits`),
   },

@@ -4,6 +4,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { projects } from '../db/schema.js';
 import { validateProjectPath, detectProjectInfo, getProjectGitInfo, getCommitsSince } from '../services/project.service.js';
+import { watcherService } from '../services/watcher.service.js';
 import { AddProjectSchema } from '@sightline/shared';
 
 export const projectsRoutes: FastifyPluginAsync = async (fastify) => {
@@ -53,8 +54,25 @@ export const projectsRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.delete<{ Params: { id: string } }>('/api/projects/:id', async (request, reply) => {
     const project = db.select().from(projects).where(eq(projects.id, request.params.id)).get();
     if (!project) return reply.code(404).send({ error: 'Not found' });
+    watcherService.stopWatching(project.id);
     db.delete(projects).where(eq(projects.id, project.id)).run();
     return reply.code(204).send();
+  });
+
+  fastify.post<{ Params: { id: string } }>('/api/projects/:id/watch', async (request, reply) => {
+    const project = db.select().from(projects).where(eq(projects.id, request.params.id)).get();
+    if (!project) return reply.code(404).send({ error: 'Not found' });
+    db.update(projects).set({ watchEnabled: true }).where(eq(projects.id, project.id)).run();
+    watcherService.startWatching({ ...project, watchEnabled: true });
+    return { watchEnabled: true };
+  });
+
+  fastify.delete<{ Params: { id: string } }>('/api/projects/:id/watch', async (request, reply) => {
+    const project = db.select().from(projects).where(eq(projects.id, request.params.id)).get();
+    if (!project) return reply.code(404).send({ error: 'Not found' });
+    db.update(projects).set({ watchEnabled: false }).where(eq(projects.id, project.id)).run();
+    watcherService.stopWatching(project.id);
+    return { watchEnabled: false };
   });
 
   fastify.get<{ Params: { id: string } }>('/api/projects/:id/health', async (request, reply) => {

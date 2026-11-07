@@ -18,6 +18,7 @@ export interface Project {
   createdAt: string;
   lastVisitedAt: string | null;
   lastScannedAt: string | null;
+  watchEnabled: boolean;
 }
 
 export interface ScanRun {

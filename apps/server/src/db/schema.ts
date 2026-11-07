@@ -12,6 +12,7 @@ export const projects = sqliteTable('projects', {
   createdAt: text('created_at').notNull(),
   lastVisitedAt: text('last_visited_at'),
   lastScannedAt: text('last_scanned_at'),
+  watchEnabled: integer('watch_enabled', { mode: 'boolean' }).notNull().default(false),
 });
 
 export const scanRuns = sqliteTable('scan_runs', {

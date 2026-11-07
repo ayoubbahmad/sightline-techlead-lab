@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { ScanRun } from '@sightline/shared';
@@ -37,6 +37,8 @@ export function ProjectPage() {
     queryKey: ['health', id],
     queryFn: () => api.projects.health(id!),
     enabled: !!id,
+    // Poll while watch is enabled so watcher-triggered scans surface automatically
+    refetchInterval: project?.watchEnabled ? 4000 : false,
   });
 
   const { data: findings } = useQuery({
@@ -63,6 +65,24 @@ export function ProjectPage() {
     void queryClient.invalidateQueries({ queryKey: ['health-summary', id] });
     void queryClient.invalidateQueries({ queryKey: ['findings', id] });
   }, [id, queryClient]);
+
+  const watchMutation = useMutation({
+    mutationFn: (enable: boolean) =>
+      enable ? api.projects.enableWatch(id!) : api.projects.disableWatch(id!),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['project', id] });
+    },
+  });
+
+  // Pick up watcher-triggered scans: when health polling detects a running scan
+  // that isn't already tracked, attach to its SSE stream
+  useEffect(() => {
+    const latestScan = health?.latestScan;
+    if (!latestScan) return;
+    if (latestScan.status !== 'running' && latestScan.status !== 'queued') return;
+    if (activeScanId === latestScan.id) return;
+    setActiveScanId(latestScan.id);
+  }, [health?.latestScan, activeScanId]);
 
   if (!project) {
     return (
@@ -116,6 +136,27 @@ export function ProjectPage() {
             )}
           </div>
         </div>
+
+        {/* Watch toggle */}
+        <button
+          onClick={() => watchMutation.mutate(!project.watchEnabled)}
+          disabled={watchMutation.isPending}
+          title={project.watchEnabled ? 'Auto-scan on commit: on — click to disable' : 'Enable auto-scan on commit'}
+          className="shrink-0 flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-colors disabled:opacity-40"
+          style={{
+            borderColor: project.watchEnabled ? 'var(--border-raised)' : 'var(--border)',
+            color: project.watchEnabled ? 'var(--text-1)' : 'var(--text-3)',
+          }}
+        >
+          <span
+            className="w-1.5 h-1.5 rounded-full shrink-0"
+            style={{
+              background: project.watchEnabled ? 'var(--c-ok)' : 'var(--text-3)',
+              boxShadow: project.watchEnabled ? '0 0 6px var(--c-ok)' : 'none',
+            }}
+          />
+          {project.watchEnabled ? 'Watching' : 'Watch'}
+        </button>
 
         <button
           onClick={() => scanMutation.mutate()}
